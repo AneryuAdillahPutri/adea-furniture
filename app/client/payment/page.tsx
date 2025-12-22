@@ -2,20 +2,53 @@
 
 import Swal from 'sweetalert2';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 
-// Komponen Form biar aman di Next.js
 function PaymentForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const [file, setFile] = useState<string | null>(null); // Simpan gambar sbg text
+
+  // FUNGSI SULAP: Ubah Gambar jadi Text (Base64)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFile(reader.result as string); // Simpan hasil konversi
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulasi Upload
+
+    if (!file) {
+      Swal.fire('Eits!', 'Upload bukti transfer dulu dong.', 'warning');
+      return;
+    }
+
+    // SIMPAN KE MEMORI (Pura-pura Kirim ke Database)
+    const newPayment = {
+      id: `PAY-${Date.now()}`, // ID Unik
+      orderId: orderId,
+      client: "Aneryu Adillah",
+      amount: "Rp 3.500.000", // Harusnya dinamis, tp gpp dummy dulu
+      date: new Date().toLocaleDateString('id-ID'),
+      method: "Transfer Bank",
+      proof: file, // GAMBAR DISIMPAN DISINI
+      status: 'Pending'
+    };
+
+    // Ambil data lama, gabung sama yg baru
+    const existingPayments = JSON.parse(localStorage.getItem('payments') || '[]');
+    localStorage.setItem('payments', JSON.stringify([...existingPayments, newPayment]));
+
     Swal.fire({
       title: 'Berhasil Upload! 🎉',
-      text: 'Admin akan mengecek pembayaranmu dalam 1x24 jam.',
+      text: 'Admin akan mengecek pembayaranmu.',
       icon: 'success',
       confirmButtonColor: '#312e81'
     }).then(() => {
@@ -40,11 +73,20 @@ function PaymentForm() {
 
       <div>
         <label className="block text-sm font-bold text-slate-700 mb-2">Upload Bukti Transfer</label>
-        <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:bg-slate-50">
+        <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer hover:bg-slate-50 relative">
           <span className="text-2xl">📸</span>
-          <p className="text-sm font-bold text-slate-500 mt-2">Klik untuk ambil foto / upload file</p>
-          <input type="file" required className="opacity-0 absolute inset-0 cursor-pointer" />
+          <p className="text-sm font-bold text-slate-500 mt-2">
+            {file ? "Gambar Terpilih! (Siap Kirim)" : "Klik untuk ambil foto / upload file"}
+          </p>
+          {/* Input File Magic */}
+          <input 
+            type="file" 
+            accept="image/*"
+            onChange={handleFileChange}
+            className="opacity-0 absolute inset-0 cursor-pointer w-full h-full" 
+          />
         </div>
+        {file && <p className="text-xs text-green-600 font-bold mt-2 text-center">File sudah masuk ✅</p>}
       </div>
 
       <button type="submit" className="w-full py-4 bg-indigo-900 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-800">
