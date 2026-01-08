@@ -32,7 +32,7 @@ export default function ClientDashboard() {
       confirmButtonText: 'Ya, Logout',
       cancelButtonText: 'Batal',
       customClass: {
-        popup: 'rounded-2xl', // Sweetalert juga kita bikin estetik
+        popup: 'rounded-2xl',
         confirmButton: 'rounded-xl px-6 py-3 font-bold',
         cancelButton: 'rounded-xl px-6 py-3 font-bold text-gray-700'
       }
@@ -89,7 +89,8 @@ export default function ClientDashboard() {
           <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">
             Selamat datang, <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-900 to-indigo-600">
-              {user.nama_lengkap}
+              {/* PERBAIKAN DI SINI: user.name */}
+              {user.name}
             </span> 👋
           </h2>
         </div>
@@ -114,7 +115,8 @@ export default function ClientDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
                 <div>
                   <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Nama Lengkap</label>
-                  <p className="text-lg font-semibold text-slate-900">{user.nama_lengkap}</p>
+                  {/* PERBAIKAN DI SINI: user.name */}
+                  <p className="text-lg font-semibold text-slate-900">{user.name}</p>
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Email Terdaftar</label>
