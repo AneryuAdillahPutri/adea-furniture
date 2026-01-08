@@ -45,8 +45,23 @@ export default function LoginPage() {
         redirectUrl = '/admin/production';
       
       } else {
-        // 5. KLIEN / PELANGGAN
-        userData = { name: "Aneryu Adillah", email: email, role: "client" };
+        // 5. KLIEN / PELANGGAN (LOGIKA PINTAR 🧠)
+        
+        let clientName = "Pelanggan Setia"; // Nama Default
+
+        // Cek nama khusus dari email
+        if (emailLower.includes('novia')) {
+          clientName = "Novia Ardany";
+        } else if (emailLower.includes('aneryu')) {
+          clientName = "Aneryu Adillah";
+        } else {
+          // Logika Otomatis: Ambil nama depan dari email (contoh: budi@gmail.com -> Budi)
+          const namePart = email.split('@')[0];
+          // Huruf pertama jadi kapital
+          clientName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+        }
+
+        userData = { name: clientName, email: email, role: "client" };
         redirectUrl = '/client/dashboard';
       }
 
